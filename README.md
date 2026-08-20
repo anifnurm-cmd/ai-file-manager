@@ -14,16 +14,17 @@ A local-first AI assistant for ordinary Windows folders.
 
 ## Windows quick start
 
-1. Install Python 3.12 or later.
-2. Double-click `start.bat`.
-3. Open `http://127.0.0.1:8787` in Chrome/Edge.
-4. Enter a folder such as `C:\Users\YourName\Documents` and click **Scan**.
+1. Install Python 3.12+ from https://www.python.org/downloads/windows/ and enable **Add Python to PATH**.
+2. Download/clone this repository.
+3. Double-click `start.bat`.
+4. It creates `.venv`, installs dependencies, starts the local server, and opens Chrome/Edge automatically at `http://127.0.0.1:8787`.
+5. If startup fails, **do not close the server window**. The error message there is the diagnostic information needed to fix the installation.
 
-The launcher creates a virtual environment and installs the Python dependencies automatically.
+The launcher deliberately keeps the server in a visible command window so Python errors do not disappear when the batch file is double-clicked.
 
 ### Optional local AI
 
-Install Ollama and run a local model, for example `qwen3:8b`. Keep Ollama running on its default address. The app will detect it automatically.
+Install Ollama and run a local model, for example `qwen3:8b`. Keep Ollama running on its default address. The app detects it automatically.
 
 Environment variables:
 
@@ -35,7 +36,7 @@ PORT=8787
 
 ### Optional OCR
 
-Install Tesseract OCR on Windows and ensure `tesseract.exe` is on PATH. Image files can then be indexed through OCR.
+Install Tesseract OCR on Windows and ensure `tesseract.exe` is on PATH. Image files can then be indexed through OCR. OCR is optional; PDFs/DOCX/XLSX/PPTX/text files do not require Tesseract.
 
 ## Important safety behavior
 
