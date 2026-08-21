@@ -1,4 +1,4 @@
-name: Smoke Test
+name: Windows Simulation
 
 on:
   push:
@@ -6,49 +6,26 @@ on:
   pull_request:
 
 jobs:
-  python-smoke:
-    name: Windows Python 3.13 smoke test
+  test:
+    name: Windows Python 3.13 full simulation
     runs-on: windows-latest
-    timeout-minutes: 10
-
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Python 3.13
+      - name: Setup Python 3.13
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
           cache: pip
           cache-dependency-path: requirements.txt
-
-      - name: Show Python and pip
-        run: |
-          python --version
-          python -m pip --version
-
-      - name: Upgrade pip tooling
-        run: python -m pip install --upgrade pip setuptools wheel
-
-      - name: Install core dependencies
-        run: python -m pip install --prefer-binary -r requirements.txt
-
-      - name: Verify dependency installation
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip setuptools wheel && python -m pip install --prefer-binary -r requirements.txt
+      - name: Dependency check
         run: python -m pip check
-
       - name: Compile application
         run: python -m py_compile app.py
-
-      - name: Verify core imports
-        run: |
-          python -c "import fastapi; print('fastapi OK', fastapi.__version__)"
-          python -c "import uvicorn; print('uvicorn OK', uvicorn.__version__)"
-          python -c "import pydantic; print('pydantic OK', pydantic.__version__)"
-          python -c "import fitz; print('PyMuPDF OK')"
-          python -c "import docx; print('python-docx OK')"
-          python -c "import openpyxl; print('openpyxl OK', openpyxl.__version__)"
-          python -c "import pptx; print('python-pptx OK', pptx.__version__)"
-          python -c "import PIL; print('Pillow OK', PIL.__version__)"
-
-      - name: Import application module
+      - name: Run complete application tests
+        run: python -m pytest -q
+      - name: Verify application import
         run: python -c "import app; print('Application import OK')"
