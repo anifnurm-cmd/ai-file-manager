@@ -30,7 +30,7 @@ jobs:
       - name: Upgrade pip tooling
         run: python -m pip install --upgrade pip setuptools wheel
 
-      - name: Install dependencies
+      - name: Install core dependencies
         run: python -m pip install --prefer-binary -r requirements.txt
 
       - name: Verify dependency installation
@@ -49,7 +49,6 @@ jobs:
           python -c "import openpyxl; print('openpyxl OK', openpyxl.__version__)"
           python -c "import pptx; print('python-pptx OK', pptx.__version__)"
           python -c "import PIL; print('Pillow OK', PIL.__version__)"
-          python -c "import pytesseract; print('pytesseract Python package OK')"
 
       - name: Import application module
         run: python -c "import app; print('Application import OK')"
