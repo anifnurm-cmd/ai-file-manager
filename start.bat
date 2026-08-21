@@ -81,6 +81,15 @@ if not defined OLLAMA_EXE (
 echo Ollama:
 "%OLLAMA_EXE%" --version
 
+rem Upgrade Ollama when an update is available; Qwen3-VL requires Ollama 0.12.7+.
+winget upgrade --id Ollama.Ollama -e --silent --accept-source-agreements --accept-package-agreements >nul 2>&1
+
+rem Refresh the executable path after a possible upgrade.
+set "OLLAMA_EXE="
+for /f "delims=" %%O in ('where ollama 2^>nul') do if not defined OLLAMA_EXE set "OLLAMA_EXE=%%O"
+if not defined OLLAMA_EXE if exist "%LOCALAPPDATA%\Programs\Ollama\ollama.exe" set "OLLAMA_EXE=%LOCALAPPDATA%\Programs\Ollama\ollama.exe"
+if not defined OLLAMA_EXE if exist "%ProgramFiles%\Ollama\ollama.exe" set "OLLAMA_EXE=%ProgramFiles%\Ollama\ollama.exe"
+
 curl.exe -s http://127.0.0.1:11434/api/version >nul 2>&1
 if errorlevel 1 (
     echo Starting Ollama background service...
