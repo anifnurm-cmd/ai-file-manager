@@ -1,47 +1,51 @@
 # AI File Manager
 
-A local-first AI assistant for ordinary Windows folders.
+A local-first Windows document assistant that can read mixed files, remember their contents, search semantically, answer questions, and safely rename files.
 
-## Current release
+## Rebuilt architecture
 
-- Indexes mixed PDFs, DOCX, XLSX/XLSM, PPTX, text/CSV/JSON/XML/log files, and common images.
-- Extracts searchable content into local SQLite + FTS5.
-- Generates deterministic local title/type/summary metadata even without an AI service.
-- Optional Ollama integration for richer metadata and natural-language answers.
-- Search by document content, title, summary, and type.
-- Safe explicit file renaming with Windows filename validation and collision checks.
-- No cloud service is required for the core indexing/search workflow.
+- PDF, DOCX, XLSX/XLSM, PPTX, TXT/CSV/JSON/XML/LOG and common images.
+- SQLite + FTS5 keyword index.
+- Optional Ollama embeddings for semantic retrieval.
+- Hybrid keyword + semantic search instead of relying on the whole question matching every keyword.
+- Optional Ollama metadata extraction and natural-language answers.
+- Explicit rename only; no automatic destructive renaming during indexing.
+- OCR is optional. The application remains usable when Windows Tesseract is absent.
+- No paid API is required for the core indexing and keyword search workflow.
 
-## Windows quick start
+## Windows
 
-1. Install Python 3.12+ from https://www.python.org/downloads/windows/ and enable **Add Python to PATH**.
-2. Download/clone this repository.
+Python 3.13 is the primary target.
+
+1. Download/clone this repository.
+2. Delete any old `.venv` created by an earlier release.
 3. Double-click `start.bat`.
-4. It creates `.venv`, installs dependencies, starts the local server, and opens Chrome/Edge automatically at `http://127.0.0.1:8787`.
-5. If startup fails, **do not close the server window**. The error message there is the diagnostic information needed to fix the installation.
+4. The launcher creates a Python 3.13 virtual environment, installs dependencies, checks them, compiles the app, starts the server, and opens `http://127.0.0.1:8787`.
 
-The launcher deliberately keeps the server in a visible command window so Python errors do not disappear when the batch file is double-clicked.
+If startup fails, keep the server window open and use the displayed error.
 
-### Optional local AI
+## Optional Ollama AI
 
-Install Ollama and run a local model, for example `qwen3:8b`. Keep Ollama running on its default address. The app detects it automatically.
-
-Environment variables:
+Install Ollama locally and run a chat model plus an embedding model. Suggested defaults:
 
 ```text
 OLLAMA_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=qwen3:8b
-PORT=8787
+OLLAMA_CHAT_MODEL=qwen3:8b
+OLLAMA_EMBED_MODEL=nomic-embed-text
 ```
 
-### Optional OCR
+Without Ollama, the app still provides local document extraction and keyword search. With Ollama, semantic retrieval, AI metadata and file-grounded answers are enabled.
 
-Install Tesseract OCR on Windows and ensure `tesseract.exe` is on PATH. Image files can then be indexed through OCR. OCR is optional; PDFs/DOCX/XLSX/PPTX/text files do not require Tesseract.
+## Optional OCR
 
-## Important safety behavior
+Install Windows Tesseract OCR and ensure `tesseract.exe` is available on PATH. Image OCR will then be used automatically. OCR failure does not prevent other document types from being indexed.
 
-The first release does **not** auto-rename files during indexing. Rename is an explicit action from the UI and rejects invalid Windows filenames and existing destination names.
+## Test
 
-## Architecture
+```powershell
+py -3.13 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m pytest -q
+```
 
-The application is intentionally compact: `app.py` contains the API, document parsers, local SQLite/FTS index, optional Ollama client, and browser UI. This keeps installation and troubleshooting simple on Windows.
+The test suite exercises the complete scan → parse → index → keyword search → AI retrieval mock → rename pipeline.
