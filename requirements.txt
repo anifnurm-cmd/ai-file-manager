@@ -1,9 +1,10 @@
 fastapi>=0.116,<1
-uvicorn[standard]>=0.35,<1
+uvicorn>=0.35,<1
 pydantic>=2.11,<3
 PyMuPDF>=1.26,<2
 python-docx>=1.2,<2
 openpyxl>=3.1,<4
 python-pptx>=1.0,<2
 Pillow>=11,<13
-pytesseract>=0.3.13,<1
+# OCR is optional. The app works without Tesseract/pytesseract.
+# Install pytesseract separately when Windows Tesseract OCR is configured.
