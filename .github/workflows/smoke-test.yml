@@ -7,7 +7,7 @@ on:
 
 jobs:
   python-smoke:
-    name: Windows Python 3.12 smoke test
+    name: Windows Python 3.13 smoke test
     runs-on: windows-latest
     timeout-minutes: 10
 
@@ -15,10 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
+      - name: Set up Python 3.13
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
           cache: pip
           cache-dependency-path: requirements.txt
 
@@ -44,12 +44,12 @@ jobs:
           python -c "import fastapi; print('fastapi OK', fastapi.__version__)"
           python -c "import uvicorn; print('uvicorn OK', uvicorn.__version__)"
           python -c "import pydantic; print('pydantic OK', pydantic.__version__)"
-          python -c "import fitz; print('PyMuPDF OK', fitz.__doc__.split()[1] if fitz.__doc__ else 'unknown')"
+          python -c "import fitz; print('PyMuPDF OK')"
           python -c "import docx; print('python-docx OK')"
           python -c "import openpyxl; print('openpyxl OK', openpyxl.__version__)"
           python -c "import pptx; print('python-pptx OK', pptx.__version__)"
           python -c "import PIL; print('Pillow OK', PIL.__version__)"
-          python -c "import pytesseract; print('pytesseract OK', pytesseract.get_tesseract_version() if __import__('shutil').which('tesseract') else 'Python package OK; Tesseract executable not installed in CI')"
+          python -c "import pytesseract; print('pytesseract Python package OK')"
 
       - name: Import application module
         run: python -c "import app; print('Application import OK')"
