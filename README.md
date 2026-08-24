@@ -1,51 +1,25 @@
 # AI File Manager
 
-A local-first Windows document assistant that can read mixed files, remember their contents, search semantically, answer questions, and safely rename files.
+Windows local-first document AI with semantic search, AI reranking, document chat, and safe renaming.
 
-## Rebuilt architecture
+## One-click setup
 
-- PDF, DOCX, XLSX/XLSM, PPTX, TXT/CSV/JSON/XML/LOG and common images.
-- SQLite + FTS5 keyword index.
-- Optional Ollama embeddings for semantic retrieval.
-- Hybrid keyword + semantic search instead of relying on the whole question matching every keyword.
-- Optional Ollama metadata extraction and natural-language answers.
-- Explicit rename only; no automatic destructive renaming during indexing.
-- OCR is optional. The application remains usable when Windows Tesseract is absent.
-- No paid API is required for the core indexing and keyword search workflow.
+Double-click `start.bat`. It installs/checks Python 3.13, Ollama, downloads the default models, creates the Python environment, installs dependencies, verifies Python syntax, starts the server, and opens the browser.
 
-## Windows
+Default AI models:
+- Chat/vision: `qwen3-vl:8b`
+- Embeddings: `qwen3-embedding:0.6b`
 
-Python 3.13 is the primary target.
+## Search architecture
 
-1. Download/clone this repository.
-2. Delete any old `.venv` created by an earlier release.
-3. Double-click `start.bat`.
-4. The launcher creates a Python 3.13 virtual environment, installs dependencies, checks them, compiles the app, starts the server, and opens `http://127.0.0.1:8787`.
+Search is semantic-first. Exact keyword matching is only a small additional signal. Semantic candidates are filtered by relative relevance and then reranked by the local chat model. Low-relevance candidates are discarded rather than shown merely because a generic keyword matched.
 
-If startup fails, keep the server window open and use the displayed error.
+Embeddings are stored with the embedding-model name so incompatible vector sets are never silently mixed.
 
-## Optional Ollama AI
+## Supported files
 
-Install Ollama locally and run a chat model plus an embedding model. Suggested defaults:
+PDF, DOCX, XLSX/XLSM, PPTX, TXT, MD, CSV, JSON, XML, LOG, and common images. Image OCR is attempted when Tesseract is available.
 
-```text
-OLLAMA_URL=http://127.0.0.1:11434
-OLLAMA_CHAT_MODEL=qwen3:8b
-OLLAMA_EMBED_MODEL=nomic-embed-text
-```
+## Safety
 
-Without Ollama, the app still provides local document extraction and keyword search. With Ollama, semantic retrieval, AI metadata and file-grounded answers are enabled.
-
-## Optional OCR
-
-Install Windows Tesseract OCR and ensure `tesseract.exe` is available on PATH. Image OCR will then be used automatically. OCR failure does not prevent other document types from being indexed.
-
-## Test
-
-```powershell
-py -3.13 -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-.venv\Scripts\python.exe -m pytest -q
-```
-
-The test suite exercises the complete scan → parse → index → keyword search → AI retrieval mock → rename pipeline.
+Indexing never renames files. Rename is an explicit action with Windows filename validation and collision checks.
